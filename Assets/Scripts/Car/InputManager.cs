@@ -1,18 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public float throttle;
+    public float steer;
+    public bool toggleLights;
+    public bool toggleCam;
+    public bool toggleNOS;
+    public bool brake;
 
-    // Update is called once per frame
     void Update()
     {
-        
+        throttle = Input.GetAxis("Vertical");
+        steer = Input.GetAxis("Horizontal");
+
+        toggleLights = Input.GetKeyDown(KeyCode.L);
+        toggleCam = Input.GetKeyDown(KeyCode.C);
+        toggleNOS = Input.GetKeyDown(KeyCode.LeftShift);
+        brake = Input.GetKey(KeyCode.Space);
     }
 }

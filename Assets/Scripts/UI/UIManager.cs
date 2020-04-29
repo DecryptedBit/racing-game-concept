@@ -1,18 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public TextMeshProUGUI speedometerText;
 
-    // Update is called once per frame
-    void Update()
+    public void UpdateSpeedometer(float speed)
     {
-        
+        float speedMetric = speed * 3.6f; // Speed in km/h
+        speedometerText.text = Mathf.Clamp(Mathf.Round(speedMetric), 0f, 100000f).ToString() + " km/h";
     }
 }
