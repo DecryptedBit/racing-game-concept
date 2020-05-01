@@ -1,11 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class ObjectManipulator : MonoBehaviour {
     public KeyCode primaryActionButton = KeyCode.Mouse0;
-    public KeyCode deformButton = KeyCode.C;
+
+    public KeyCode forceRegenBtn = KeyCode.R;
+    public KeyCode loopCutDownBtn = KeyCode.Alpha1;
+    public KeyCode loopCutXUpBtn = KeyCode.Alpha2;
+    public KeyCode loopCutZUpBtn = KeyCode.Alpha3;
+    public KeyCode drawFacesBtn = KeyCode.Alpha4;
+    public KeyCode widthDownBtn = KeyCode.Alpha5;
+    public KeyCode widthUpBtn = KeyCode.Alpha6;
+
+    public Material selectedMaterial;
 
     private ManipulatableObject selectedObject = null;
     private List<Vector3> originalVerticies;
@@ -15,8 +22,30 @@ public class ObjectManipulator : MonoBehaviour {
     {
         if (Input.GetKeyDown(primaryActionButton))
             CastSelectRay();
-        if (Input.GetKeyDown(deformButton) && selectedObject != null)
-            selectedObject.ApplyLoopCut();
+        if (selectedObject != null)
+        {
+            if (Input.GetKeyDown(forceRegenBtn))
+                selectedObject.Regenerate();
+
+            if (Input.GetKeyDown(loopCutDownBtn))
+                selectedObject.RemoveLoopCut();
+            if (Input.GetKeyDown(loopCutXUpBtn))
+                selectedObject.AddLoopCut(true, false);
+            if (Input.GetKeyDown(loopCutZUpBtn))
+                selectedObject.AddLoopCut(false, true);
+
+            if (Input.GetKeyDown(drawFacesBtn))
+            {
+                bool state = !selectedObject.GetGlobalDrawFaces();
+                selectedObject.SetDrawFaces(state);
+            }
+
+            
+            if (Input.GetKeyDown(widthDownBtn))
+                selectedObject.RemoveWidth();
+            if (Input.GetKeyDown(widthUpBtn))
+                selectedObject.AddWidth();
+        }
     }
 
     private void CastSelectRay()
@@ -30,22 +59,25 @@ public class ObjectManipulator : MonoBehaviour {
 
             if (newlySelectedObject != selectedObject)
             {
-                ReleaseSelectedObject();
+                ReleaseManipulatableObject();
                 
                 if (newlySelectedObject != null)
-                {
-                    selectedObject = newlySelectedObject;
-                    selectedObject.Select();
-                }
+                    SelectManipulatableObject(newlySelectedObject);
             }
             else
-                ReleaseSelectedObject();
+                ReleaseManipulatableObject();
         }
         else
-            ReleaseSelectedObject();
+            ReleaseManipulatableObject();
     }
 
-    private void ReleaseSelectedObject()
+    private void SelectManipulatableObject(ManipulatableObject manipulatableObject)
+    {
+        selectedObject = manipulatableObject;
+        selectedObject.Select(selectedMaterial);
+    }
+
+    private void ReleaseManipulatableObject()
     {
         if (selectedObject != null)
             selectedObject.Release();

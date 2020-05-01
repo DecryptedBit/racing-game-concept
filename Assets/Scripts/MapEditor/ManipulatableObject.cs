@@ -3,9 +3,8 @@
 [RequireComponent(typeof(Renderer), typeof(MeshFilter), typeof(MeshCollider))]
 public class ManipulatableObject : MonoBehaviour
 {
-    private ManipulatableObjectDeformer _deformer;
+    private ManipulatableRoad _manipulatableRoad;
 
-    public Material selectedMat;
     private Material _standardMat;
 
     #region Variables: Components
@@ -40,14 +39,14 @@ public class ManipulatableObject : MonoBehaviour
 
         _standardMat = _renderer.material;
 
-        _deformer = GetComponent<ManipulatableObjectDeformer>();
-        if (_deformer != null)
-            _deformer.ManipulatableObject = this;
+        _manipulatableRoad = GetComponent<ManipulatableRoad>();
+        if (_manipulatableRoad != null)
+            _manipulatableRoad.ManipulatableObject = this;
     }
 
-    public void Select()
+    public void Select(Material material)
     {
-        _renderer.material = selectedMat;
+        _renderer.material = material;
     }
 
     public void Release()
@@ -55,12 +54,55 @@ public class ManipulatableObject : MonoBehaviour
         _renderer.material = _standardMat;
     }
 
-    public void ApplyLoopCut()
+    public void Regenerate()
     {
-        if (_deformer != null)
-        {
-            _deformer.LoopCutsX += 1;
-            _deformer.LoopCutsZ += 1;
-        }
+        if (_manipulatableRoad != null)
+            _manipulatableRoad.RegenerateMesh();
+    }
+
+    public void AddLoopCut(bool x, bool z)
+    {
+        if (_manipulatableRoad == null)
+            return;
+
+        if (x && z)
+            _manipulatableRoad.LoopCuts = (_manipulatableRoad.LoopCutsX + 1, _manipulatableRoad.LoopCutsZ + 1);
+        else if (x)
+            _manipulatableRoad.LoopCutsX += 1;
+        else if (z)
+            _manipulatableRoad.LoopCutsZ += 1;
+            
+    }
+
+    public void RemoveLoopCut()
+    {
+        if (_manipulatableRoad != null)
+            _manipulatableRoad.LoopCuts = (_manipulatableRoad.LoopCutsX - 1, _manipulatableRoad.LoopCutsZ - 1);
+    }
+
+    public void AddWidth()
+    {
+        if (_manipulatableRoad != null)
+            _manipulatableRoad.Width += 0.2f;
+    }
+
+    public void RemoveWidth()
+    {
+        if (_manipulatableRoad != null)
+            _manipulatableRoad.Width -= 0.2f;
+    }
+
+    public void SetDrawFaces(bool state)
+    {
+        if (_manipulatableRoad != null)
+            _manipulatableRoad.DrawFaces = new bool[] { state, state, state, state, state };
+    }
+
+    public bool GetGlobalDrawFaces()
+    {
+        if (_manipulatableRoad == null)
+            return false;
+        
+        return _manipulatableRoad.DrawFaces[0];
     }
 }
