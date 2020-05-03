@@ -22,6 +22,7 @@ public class ObjectManipulator : MonoBehaviour {
     {
         if (Input.GetKeyDown(primaryActionButton))
             CastSelectRay();
+
         if (selectedObject != null)
         {
             if (Input.GetKeyDown(forceRegenBtn))
@@ -39,7 +40,6 @@ public class ObjectManipulator : MonoBehaviour {
                 bool state = !selectedObject.GetGlobalDrawFaces();
                 selectedObject.SetDrawFaces(state);
             }
-
             
             if (Input.GetKeyDown(widthDownBtn))
                 selectedObject.RemoveWidth();

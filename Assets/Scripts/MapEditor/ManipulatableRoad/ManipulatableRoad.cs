@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using CCollections;
 using UnityEngine;
 
 public class ManipulatableRoad : MonoBehaviour
@@ -164,26 +164,37 @@ public class ManipulatableRoad : MonoBehaviour
     public void RegenerateMesh()
     {
         // Create arrays to hold the base vertices and indices
-        TrackingArray<Vector3> vertices = new TrackingArray<Vector3>(ManipulatableRoadHelper.CalculateTotalVertexCount(this));
-        TrackingArray<int> indices = new TrackingArray<int>(ManipulatableRoadHelper.CalculateTotalIndexCount(this));
+        TrackingList<Vector3> vertices = new TrackingList<Vector3>(ManipulatableRoadHelper.CalculateTotalVertexCount(this));
+        TrackingList<int> indices = new TrackingList<int>(ManipulatableRoadHelper.CalculateTotalIndexCount(this));
+        Vector3[] baseNormals = null;
 
-        // Create the base face that face upwards
-        ManipulatableRoadHelper.CreateBaseFace(this, vertices, indices);
-        
-        // Calculate the normals for the base vertices
-        Vector3[] baseNormals = ManipulatableRoadHelper.CalulateNormals(_manipulatableObject, vertices, indices);
+        for (int i = 0; i < 6; i++)
+        {
+            // Create a road face object representing a side
+            RoadFace roadFace = null;
 
-        // Extrude sides and bottom from base face.
-        if (_drawFaces[0]) // Down
-            ManipulatableRoadHelper.ExtrudeBaseFaceBottom(this, Vector3.down,      vertices, indices, baseNormals);
-        if (_drawFaces[1]) // Forward
-            ManipulatableRoadHelper.ExtrudeBaseFaceFB(this, Vector3.forward,   vertices, indices, baseNormals);
-        if (_drawFaces[2]) // Back
-            ManipulatableRoadHelper.ExtrudeBaseFaceFB(this, Vector3.back,      vertices, indices, baseNormals);
-        if (_drawFaces[3]) // Left
-            ManipulatableRoadHelper.ExtrudeBaseFaceLR(this, Vector3.left,      vertices, indices, baseNormals);
-        if (_drawFaces[4]) // Right
-            ManipulatableRoadHelper.ExtrudeBaseFaceLR(this, Vector3.right,     vertices, indices, baseNormals);
+            if (i == 0) // Create the base face that faces upwards
+                roadFace = new RoadFaceUp(this);
+            else if (_drawFaces[i - 1])
+            {
+                if (i == 1)
+                    roadFace = new RoadFaceDown(this, vertices, baseNormals);
+                else if (i == 2)
+                    roadFace = new RoadFaceForward(this, vertices, baseNormals);
+                else if (i == 3)
+                    roadFace = new RoadFaceBack(this, vertices, baseNormals);
+                else if (i == 4)
+                    roadFace = new RoadFaceLeft(this, vertices, baseNormals);
+                else if (i == 5)
+                    roadFace = new RoadFaceRight(this, vertices, baseNormals);
+            }
+
+            roadFace.CreateFace(vertices, indices);
+
+            // Calculate the base face normals that the other faces will use
+            if (i == 0)
+                baseNormals = ManipulatableRoadHelper.CalulateNormals(_manipulatableObject, vertices, indices);
+        }
 
         ManipulatableRoadHelper.UpdateMesh(_manipulatableObject, vertices, indices);
     }
