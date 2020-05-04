@@ -1,16 +1,19 @@
 using CCollections;
 using UnityEngine;
 
-public class RoadFaceLeft : RoadFaceExtruded
+namespace MapEditor.Manipulation
 {
-    protected override bool IsSideFace {get { return true; }}
-    protected override int LoopEnd {get { return base.ManipulatableRoad.VertexCountZ; }}
-
-    public RoadFaceLeft(ManipulatableRoad manipulatableRoad, TrackingList<Vector3> vertices, Vector3[] normals)
-        : base(manipulatableRoad, vertices, normals){}
-
-    protected override void CreateIndices(int xPointer, int zPointer, TrackingList<int> indices)
+    public class RoadFaceLeft : RoadFaceExtruded
     {
-        base.CreateIndices(zPointer, xPointer, indices);
+        protected override bool IsSideFace {get { return true; }}
+        protected override int LoopEnd {get { return base.ManipulatableRoad.VertexCountZ; }}
+
+        public RoadFaceLeft(ManipulatableRoad manipulatableRoad, TrackingList<Vector3> vertices, Vector3[] normals)
+            : base(manipulatableRoad, vertices, normals){}
+
+        protected override void CreateIndices(int xPointer, int zPointer, TrackingList<int> indices)
+        {
+            base.CreateIndices(zPointer, xPointer, indices);
+        }
     }
 }

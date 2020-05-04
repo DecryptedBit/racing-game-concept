@@ -1,108 +1,111 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Renderer), typeof(MeshFilter), typeof(MeshCollider))]
-public class ManipulatableObject : MonoBehaviour
+namespace MapEditor.Manipulation
 {
-    private ManipulatableRoad _manipulatableRoad;
-
-    private Material _standardMat;
-
-    #region Variables: Components
-    private Renderer _renderer;
-    public Renderer Renderer
+    [RequireComponent(typeof(Renderer), typeof(MeshFilter), typeof(MeshCollider))]
+    public class ManipulatableObject : MonoBehaviour
     {
-        get { return _renderer; }
-    }
+        private ManipulatableRoad _manipulatableRoad;
 
-    private MeshFilter _meshFilter;
-    public MeshFilter MeshFilter
-    {
-        get { return _meshFilter; }
-    }
-    public Mesh Mesh
-    {
-        get { return _meshFilter.mesh; }
-    }
+        private Material _standardMat;
 
-    private MeshCollider _meshCollider;
-    public MeshCollider MeshCollider
-    {
-        get { return _meshCollider; }
-    }
-    #endregion
+        #region Variables: Components
+        private Renderer _renderer;
+        public Renderer Renderer
+        {
+            get { return _renderer; }
+        }
 
-    void Start()
-    {
-        _renderer = GetComponent<Renderer>();
-        _meshFilter = GetComponent<MeshFilter>();
-        _meshCollider = GetComponent<MeshCollider>();
+        private MeshFilter _meshFilter;
+        public MeshFilter MeshFilter
+        {
+            get { return _meshFilter; }
+        }
+        public Mesh Mesh
+        {
+            get { return _meshFilter.mesh; }
+        }
 
-        _standardMat = _renderer.material;
+        private MeshCollider _meshCollider;
+        public MeshCollider MeshCollider
+        {
+            get { return _meshCollider; }
+        }
+        #endregion
 
-        _manipulatableRoad = GetComponent<ManipulatableRoad>();
-        if (_manipulatableRoad != null)
-            _manipulatableRoad.ManipulatableObject = this;
-    }
+        void Start()
+        {
+            _renderer = GetComponent<Renderer>();
+            _meshFilter = GetComponent<MeshFilter>();
+            _meshCollider = GetComponent<MeshCollider>();
 
-    public void Select(Material material)
-    {
-        _renderer.material = material;
-    }
+            _standardMat = _renderer.material;
 
-    public void Release()
-    {
-        _renderer.material = _standardMat;
-    }
+            _manipulatableRoad = GetComponent<ManipulatableRoad>();
+            if (_manipulatableRoad != null)
+                _manipulatableRoad.ManipulatableObject = this;
+        }
 
-    public void Regenerate()
-    {
-        if (_manipulatableRoad != null)
-            _manipulatableRoad.RegenerateMesh();
-    }
+        public void Select(Material material)
+        {
+            _renderer.material = material;
+        }
 
-    public void AddLoopCut(bool x, bool z)
-    {
-        if (_manipulatableRoad == null)
-            return;
+        public void Release()
+        {
+            _renderer.material = _standardMat;
+        }
 
-        if (x && z)
-            _manipulatableRoad.LoopCuts = (_manipulatableRoad.LoopCutsX + 1, _manipulatableRoad.LoopCutsZ + 1);
-        else if (x)
-            _manipulatableRoad.LoopCutsX += 1;
-        else if (z)
-            _manipulatableRoad.LoopCutsZ += 1;
+        public void Regenerate()
+        {
+            if (_manipulatableRoad != null)
+                _manipulatableRoad.RegenerateMesh();
+        }
+
+        public void AddLoopCut(bool x, bool z)
+        {
+            if (_manipulatableRoad == null)
+                return;
+
+            if (x && z)
+                _manipulatableRoad.LoopCuts = (_manipulatableRoad.LoopCutsX + 1, _manipulatableRoad.LoopCutsZ + 1);
+            else if (x)
+                _manipulatableRoad.LoopCutsX += 1;
+            else if (z)
+                _manipulatableRoad.LoopCutsZ += 1;
+                
+        }
+
+        public void RemoveLoopCut()
+        {
+            if (_manipulatableRoad != null)
+                _manipulatableRoad.LoopCuts = (_manipulatableRoad.LoopCutsX - 1, _manipulatableRoad.LoopCutsZ - 1);
+        }
+
+        public void AddWidth()
+        {
+            if (_manipulatableRoad != null)
+                _manipulatableRoad.Width += 0.2f;
+        }
+
+        public void RemoveWidth()
+        {
+            if (_manipulatableRoad != null)
+                _manipulatableRoad.Width -= 0.2f;
+        }
+
+        public void SetDrawFaces(bool state)
+        {
+            if (_manipulatableRoad != null)
+                _manipulatableRoad.DrawFaces = new bool[] { state, state, state, state, state };
+        }
+
+        public bool GetGlobalDrawFaces()
+        {
+            if (_manipulatableRoad == null)
+                return false;
             
-    }
-
-    public void RemoveLoopCut()
-    {
-        if (_manipulatableRoad != null)
-            _manipulatableRoad.LoopCuts = (_manipulatableRoad.LoopCutsX - 1, _manipulatableRoad.LoopCutsZ - 1);
-    }
-
-    public void AddWidth()
-    {
-        if (_manipulatableRoad != null)
-            _manipulatableRoad.Width += 0.2f;
-    }
-
-    public void RemoveWidth()
-    {
-        if (_manipulatableRoad != null)
-            _manipulatableRoad.Width -= 0.2f;
-    }
-
-    public void SetDrawFaces(bool state)
-    {
-        if (_manipulatableRoad != null)
-            _manipulatableRoad.DrawFaces = new bool[] { state, state, state, state, state };
-    }
-
-    public bool GetGlobalDrawFaces()
-    {
-        if (_manipulatableRoad == null)
-            return false;
-        
-        return _manipulatableRoad.DrawFaces[0];
+            return _manipulatableRoad.DrawFaces[0];
+        }
     }
 }
